@@ -39,7 +39,6 @@ passport.use('local',new Strategy(
     // by default, local strategy uses username and password, we will override with email
   function(username, password, done) { // callback with email and password from our form
     conn.query("SELECT * FROM tbl_users WHERE username = ?",username, function(err, rows){
-      
       if (err)
         return done(err);
       if (!rows.length) { return done(null, false); }
@@ -119,7 +118,6 @@ app.get('/slideshowPanel',require('connect-ensure-login').ensureLoggedIn(),(req,
 });
 
 app.post('/addSlideshowBook',require('connect-ensure-login').ensureLoggedIn(),(req,res) => {
-  console.log(req.body);
   let data = { book_id: req.body.book_id};
   let sql = "INSERT INTO tbl_slideshow SET ?";
   let query = conn.query(sql, data,(err, results) => {
@@ -129,7 +127,7 @@ app.post('/addSlideshowBook',require('connect-ensure-login').ensureLoggedIn(),(r
 });
 
 app.post('/removeSlideshowBook',require('connect-ensure-login').ensureLoggedIn(),(req,res) => {
-  console.log(req.body);
+
   let sql = "DELETE FROM tbl_slideshow WHERE book_id="+req.body.book_id+"";
   let query = conn.query(sql, (err, results) => {
     if(err) throw err;
@@ -157,7 +155,6 @@ app.post('/upload',require('connect-ensure-login').ensureLoggedIn(), (req, res, 
         let randomNumber = Math.floor(Math.random() * 101);
         fileName = randomNumber+fileName;
         var newPath = path.join(__dirname, 'public')+ '/uploadedbyusers/'+fileName;
-        console.log(newPath);
         var rawData = fs.readFileSync(oldPath); 
         let sql="INSERT INTO tbl_uploads (name,user_id,type_of_upload,path) VALUES('"+files.file.name+"',"+fields.user_id+",'"+fields.documentType+"','"+fileName+"')";
         let query = conn.query(sql, (err, results) => {
@@ -211,7 +208,11 @@ app.get('/allBooks',(req, res) => {
         if(err) throw err;
         results3 = req.params;
         if(req.query.category){
-        results3.category_name=results2[req.query.category].category_name;
+        for(i in results2){
+          if (results2[i].id == req.query.category){
+            results3.category_name=results2[i].category_name;
+          }
+        }
         results3.category=req.query.category;
         }else if(req.query.author){ 
           results3.author_name = results4[0].author_name;
@@ -379,13 +380,14 @@ app.post('/deleteAuthor',require('connect-ensure-login').ensureLoggedIn(),(req, 
 app.get('/ergoview',require('connect-ensure-login').ensureLoggedIn(),(req, res) => {
   let sql = "SELECT tbl_uploads.id, tbl_uploads.name, tbl_uploads.type_of_upload, tbl_uploads.current_state, tbl_uploads.path, tbl_users.firstName, tbl_users.lastName, tbl_users.email, tbl_users.user_id  FROM tbl_uploads INNER JOIN tbl_users ON tbl_users.user_id = tbl_uploads.user_id  ";
   let query = conn.query(sql, (err, results) => {
-      res.render('ergoview',{
+      res.render('ergoView',{
       results: results,
       user: req.user });
 
     
   });
 });
+
 //route for update ergostate
 app.post('/updateErgoState',require('connect-ensure-login').ensureLoggedIn(),(req, res) => {
   let sql = "UPDATE tbl_uploads SET current_state='"+req.body.current_state+"' WHERE id="+req.body.id;
@@ -408,10 +410,8 @@ app.get('/usersview',require('connect-ensure-login').ensureLoggedIn(),(req, res)
 });
 //route for update user
 app.post('/updateUser',require('connect-ensure-login').ensureLoggedIn(),(req, res) => {
-  console.log(req.body);
-  console.log(req.body.isAdmin);
+
   if(req.body.isAdmin == '1'){
-    console.log("make me admin");
     let sql = "UPDATE tbl_users SET role='Admin', isAdmin='1' WHERE user_id="+req.body.id;
     let query = conn.query(sql, (err, results) => {
       if(err) throw err;
@@ -419,7 +419,6 @@ app.post('/updateUser',require('connect-ensure-login').ensureLoggedIn(),(req, re
     });
   }
   else if(req.body.isAdmin == '0'){
-    console.log("make me user");
     let sql2 = "UPDATE tbl_users SET role='User', isAdmin='0' WHERE user_id="+req.body.id;
     let query = conn.query(sql2, (err, results) => {
       if(err) throw err;
@@ -672,7 +671,7 @@ app.post('/registerUser', function(req,res){
 
 app.get('/registered',
   function(req, res) {
-    res.render('registered');
+    res.render('registered', { user: req.user });
   }
 );
 
@@ -757,22 +756,20 @@ app.post('/contact', (req, res) => {
       pass: process.env.GMAIL_PASS
     }
   })
-
-  // Specify what the email will look like
   const mailOpts = {
-    from: 'Your sender info here', // This is ignored by Gmail
+    from: 'Sender', // This is ignored by Gmail
     to: process.env.GMAIL_USER,
-    subject: 'New message from contact form at ekdotikosOikos',
+    subject: 'Contact form at ekdotikosOikos',
     text: `${req.body.firstname} ${req.body.surname} (${req.body.email}) says: ${req.body.subject}`
   }
 
   // Attempt to send the email
   smtpTrans.sendMail(mailOpts, (error, response) => {
     if (error) {
-      res.render('emailFailed') // Show a page indicating failure
+      res.render('emailFailed',{user: req.user }) //Indicating failure
     }
     else {
-      res.render('emailsent') // Show a page indicating success
+      res.render('emailsent',{user: req.user }) //Indicating success
     }
   })
 })
@@ -794,7 +791,6 @@ app.get('/emailToUser',require('connect-ensure-login').ensureLoggedIn(),
 
 // POST route from contact form
 app.post('/sendToUser',require('connect-ensure-login').ensureLoggedIn(), (req, res) => {
-  console.log(req.body);
   // Instantiate the SMTP server
   const smtpTrans = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -817,10 +813,10 @@ app.post('/sendToUser',require('connect-ensure-login').ensureLoggedIn(), (req, r
   // Attempt to send the email
     smtpTrans.sendMail(mailOpts, (error, response) => {
     if (error) {
-      res.render('emailFailed2') // Show a page indicating failure
+      res.render('emailFailed2',{user: req.user }) // Show a page indicating failure
     }
     else {
-    res.render('emailsent2') // Show a page indicating success
+    res.render('emailsent2',{user: req.user }) // Show a page indicating success
     }
   })
   
