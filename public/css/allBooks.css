@@ -97,13 +97,14 @@
         top: -150px;
     }
     #closeToggle{
+        border: solid white 1px;
         display: inline;
         color: rgb(240, 240, 240);
         font-size: 40px;
         z-index: 300;
         font-weight: 700;
         position: relative;
-        top:-380px;
+        top:-360px;
     }
 }
 @media screen and (min-width: 768px) {
