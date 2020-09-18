@@ -4,9 +4,9 @@
   "description": "Project Peppas Daniil",
   "main": "index.js",
   "scripts": {
-    "debug": "nodemon --inspect ./server.js",
-    "watch": "nodemon ./server.js",
-    "start": "node ./server.js"
+    "debug": "nodemon --inspect ./server2.js",
+    "watch": "nodemon ./server2.js",
+    "start": "node ./server2.js"
   },
   "engines": {
     "node": ">=8.11.1"
