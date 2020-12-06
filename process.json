@@ -1,0 +1,9 @@
+{
+    "watch": ["server", "client"],
+    "ignore_watch" : [ "public/img/covers", "public/uploadedbyusers"],
+    "watch_options": {
+      "followSymlinks": false
+    },
+    "name": "server2"
+}
+

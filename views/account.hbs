@@ -56,8 +56,7 @@
                 <p><b id="totalComments" class="ml-2">{{results.0.length}}</b> / 10 <span style="font-style: italic;">σχολιασμοί</span></p>
             </div>
             <div class="col-md-4">
-                {{!-- //kalitera na  ginei sto nodejs auto, poio badge dld na emfanizetai --}}
-                {{!-- me ousiastika ena element img kai hbs sto src="" --}}
+                <input type="hidden" name="badge" id="badge" value="{{results.0.length}}">
                 <img src="../img/badgeFull.png" alt="Full Badge" id="badgeFull">
                 <img src="../img/badgeGrey.png" alt="Empty Badge" id="badgeGrey">
             </div>

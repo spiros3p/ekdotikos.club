@@ -148,7 +148,7 @@ const uploadFile = multer({
     }
 });
 
-app.post('/uploadFile',require('connect-ensure-login').ensureLoggedIn(),uploadFile.single('pdfFile') , (req, res, next) => { 
+app.post('/uploadFile',require('connect-ensure-login').ensureLoggedIn() ,uploadFile.single('pdfFile') , (req, res) => { 
   if (req.file==null){
     res.redirect('account');
   }else{
@@ -176,7 +176,7 @@ app.post('/deleteFile',require('connect-ensure-login').ensureLoggedIn(),(req, re
   let sql = "DELETE FROM tbl_uploads WHERE id='"+req.body.upload_id+"'";
   let query = conn.query(sql, (err, results) => {
     if(err) throw err;
-    var Pathara = path.join(uploadPath, req.body.path);
+    var Pathara = path.join(uploadFilePath, req.body.path);
     console.log(Pathara);
     fs.unlink(Pathara, (err) => {if (err) throw err;});
     res.redirect(req.body.redirect);

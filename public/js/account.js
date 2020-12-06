@@ -2,13 +2,12 @@ let badgeFull = document.getElementById("badgeFull");
 let badgeGrey = document.getElementById("badgeGrey");
 let totCom = document.getElementById("totalComments");
 let upBtn = document.getElementById("uploadBtn");
-let doc = document.getElementById("document");
+let doc = document.getElementById("fileUpload");
 let radioType = document.getElementsByClassName("radioType");
 
-upBtn.disabled = false;
+upBtn.disabled = true;
 doc.addEventListener('change',upBtnDisabled);
-
-//kalitera na  ginei sto nodejs auto
+let comments = document.getElementById("badge");
 if (totCom.innerHTML < 10){
     badgeFull.style.display = "none";
 }else{
