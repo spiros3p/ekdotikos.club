@@ -93,7 +93,7 @@
         <div class="row thirdB my-3 p-3 ">
             <h3>Ανέβασε το έργο σου</h3>
             {{!-- edw prepei na to deis pws 8a ginei kai pou 8a anevainoun ta erga --}}
-                <form action="upload" enctype="multipart/form-data" method="post" class="w-100 mt-3 px-3">
+                <form action="uploadFile" enctype="multipart/form-data" method="POST" class="w-100 mt-3 px-3">
                     <input type = "hidden" id = "type" name = "type" value ="user_upload" />
                     <input type = "hidden" id = "user_id" name = "user_id" value ={{user.user_id}} />
                     
@@ -105,10 +105,12 @@
                         <input type="radio" class="radioType" id="book" onclick="upBtnDisabled()" name="documentType" value="Έργο">
                         <label for="male">Έργο</label>
                     </div>
-                    <div class="col-md-7">
-                        <label for="avatar">Ανέβασε το αρχείο PDF:</label>
-                        <input type="file" id="document" name="file" accept="application/pdf">
-                        <input type="submit" value="Ανέβασμα" id="uploadBtn" />
+                    <div class="col-md-7 row">
+                        <label class="col-md-4" for="avatar">Ανέβασε το αρχείο PDF:</label>
+                        <input class="col-md-5" type="file" id="fileUpload" value="arxeio" name="pdfFile" accept="application/pdf">
+                        
+                        {{!-- <input class="col-md-2" type="submit" id="uploadBtn" /> --}}
+                        <button type="submit" id="uploadBtn" class="col-md-2 btn btn-primary">Upload</button>
                     </div>
                 </form>
         </div>
@@ -121,13 +123,17 @@
                         {{!-- for each gia ta erga mou apo neo pinaka sto db --}}
                         {{#each results3}}
                         <li class="m-2 row">
-                            <div class="col-md-5"><a href="/uploadedbyusers/{{ path }}">{{name}}</a></div>
+                            <div class="col-md-5" style="overflow: hidden;"><a href="/uploadedbyusers/{{ path }}">{{name}}</a></div>
                             <div class="col-md-3">{{type_of_upload}}</div>
                             <div class="col-md-2 currentState" value="{{current_state}}">{{current_state}}</div>
-                            <div class="col-md-2"><form action="/deleteUpload" method="post">
-                                <input type = "hidden" class="deleteUpload" id = "upload_id" name = "upload_id" value ={{id}} />
-                                <input type = "hidden" class="deleteUpload" id = "redirect" name = "redirect" value ="/account" /><button type="submit"  title="Wishlist2">Αφαίρεση</button>
-                                </form></div>
+                            <div class="col-md-2">
+                                <form action="/deleteFile" method="post">
+                                    <input type = "hidden" class="deleteUpload" id = "upload_id" name = "upload_id" value = "{{id}}" />
+                                    <input type = "hidden" class="deleteUpload" id = "pathh" name = "path" value ="{{path}}" />
+                                    <input type = "hidden" class="deleteUpload" id = "redirect" name = "redirect" value ="account" />
+                                    <button type="submit"  title="Wishlist2">Αφαίρεση</button>
+                                </form>
+                            </div>
                         </li>
                         <hr>
                         {{/each}}

@@ -135,6 +135,55 @@ app.post('/removeSlideshowBook',require('connect-ensure-login').ensureLoggedIn()
   });
 });
 
+/////////////// UPLOAD FILE  /////////////////////////
+const multer = require('multer');
+
+///image types accepted
+const fileMimeTypes = ['application/pdf'];
+const uploadFilePath = path.join('public','/uploadedbyusers');
+const uploadFile = multer({
+    dest: uploadFilePath,
+    fileFilter: (req, file, callback)=>{
+        callback(null, fileMimeTypes.includes(file.mimetype))
+    }
+})
+
+app.post('/uploadFile',require('connect-ensure-login').ensureLoggedIn(),uploadFile.single('pdfFile') , (req, res, next) => { 
+  console.log(req.file);
+  if (req.file==null){
+    rres.redirect('account');
+  }else{
+    var originalname = req.file.originalname;
+    let sql0  = "SELECT COUNT(*) as count FROM tbl_uploads";
+    let query0 = conn.query(sql0, (err, counts)=>{
+        if(err) throw err;
+        let fileCount = counts[0].count;
+        var newPath = req.file.destination+"/"+fileCount+"_"+originalname;
+        var oldPath = req.file.path;
+        let sql1="INSERT INTO tbl_uploads (name,user_id,type_of_upload,path) VALUES('"+fileCount+"_"+originalname+"',"+req.body.user_id+",'"+req.body.documentType+"','"+fileCount+"_"+originalname+"')";
+        let query1 = conn.query(sql1, (err, results) => {
+            if(err) throw err;
+            var rawData = fs.readFileSync(oldPath);
+            fs.writeFile(newPath, rawData, function(err){ if(err) console.log(err); });
+            fs.unlink(oldPath, (err) => {if (err) throw err});
+            res.redirect('account');
+        });
+    });
+  }
+});
+
+//delete upload from pc and from db
+app.post('/deleteFile',require('connect-ensure-login').ensureLoggedIn(),(req, res) => {
+  let sql = "DELETE FROM tbl_uploads WHERE id='"+req.body.upload_id+"'";
+  let query = conn.query(sql, (err, results) => {
+    if(err) throw err;
+    var Pathara = path.join(uploadPath, req.body.path);
+    console.log(Pathara);
+    fs.unlink(Pathara, (err) => {if (err) throw err;});
+    res.redirect(req.body.redirect);
+  });
+});
+
 app.post('/upload',require('connect-ensure-login').ensureLoggedIn(), (req, res, next) => { 
   const form = new formidable.IncomingForm(); 
   form.parse(req, function(err, fields, files){
@@ -167,21 +216,7 @@ app.post('/upload',require('connect-ensure-login').ensureLoggedIn(), (req, res, 
       }
   }); 
 }); 
-//delete upload from pc and from db
-app.post('/deleteUpload',require('connect-ensure-login').ensureLoggedIn(),(req, res) => {
-  let sql0 = "SELECT * FROM tbl_uploads WHERE id='"+req.body.upload_id+"'";
-  let query0 = conn.query(sql0, (err, results0) => {
-    let sql = "DELETE FROM tbl_uploads WHERE id='"+req.body.upload_id+"'";
-    let query = conn.query(sql, (err, results) => {
-      if(err) throw err;
-      var Pathara = path.join(__dirname, 'public')+ '/uploadedbyusers/'+results0[0].path;
-      fs.unlink(Pathara, (err) => {
-        if (err) throw err;
-        res.redirect(req.body.redirect);
-      });
-    });
-  });
-});
+
 
 //route for allBooks
 app.get('/allBooks',(req, res) => {

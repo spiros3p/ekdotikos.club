@@ -47,6 +47,12 @@
             <a href="javascript:void(0);" class="btn btn-sm btn-info edit"  data-id="{{id}}"  data-current_state="{{ current_state }}"  >Επεξεργασία</a>
             
             <a href="javascript:void(0);" class="btn btn-sm btn-danger delete" data-id="{{ id }}">Διαγραφή</a>
+            <form action="/deleteFile" method="post">
+              <input type = "hidden" class="deleteUpload" id = "upload_id" name = "upload_id" value = "{{id}}" />
+              <input type = "hidden" class="deleteUpload" id = "pathh" name = "path" value ="{{path}}" />
+              <input type = "hidden" class="deleteUpload" id = "redirect" name = "redirect" value ="ergoView" />
+              <button type="submit"  title="Wishlist2">Αφαίρεση</button>
+            </form>
           </td>
         </tr>
         {{/each}}

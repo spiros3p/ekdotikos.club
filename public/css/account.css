@@ -123,5 +123,5 @@
     background-color: grey;
 }
 #document{
-    width: 200px;
+    overflow: hidden;
 }

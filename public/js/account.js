@@ -5,7 +5,7 @@ let upBtn = document.getElementById("uploadBtn");
 let doc = document.getElementById("document");
 let radioType = document.getElementsByClassName("radioType");
 
-upBtn.disabled = true;
+upBtn.disabled = false;
 doc.addEventListener('change',upBtnDisabled);
 
 //kalitera na  ginei sto nodejs auto
