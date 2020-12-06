@@ -146,12 +146,11 @@ const uploadFile = multer({
     fileFilter: (req, file, callback)=>{
         callback(null, fileMimeTypes.includes(file.mimetype))
     }
-})
+});
 
 app.post('/uploadFile',require('connect-ensure-login').ensureLoggedIn(),uploadFile.single('pdfFile') , (req, res, next) => { 
-  console.log(req.file);
   if (req.file==null){
-    rres.redirect('account');
+    res.redirect('account');
   }else{
     var originalname = req.file.originalname;
     let sql0  = "SELECT COUNT(*) as count FROM tbl_uploads";
@@ -164,8 +163,8 @@ app.post('/uploadFile',require('connect-ensure-login').ensureLoggedIn(),uploadFi
         let query1 = conn.query(sql1, (err, results) => {
             if(err) throw err;
             var rawData = fs.readFileSync(oldPath);
-            fs.writeFile(newPath, rawData, function(err){ if(err) console.log(err); });
-            fs.unlink(oldPath, (err) => {if (err) throw err});
+            fs.writeFile(newPath, rawData, (err) => { if(err) throw err; });
+            fs.unlink(oldPath, (err) => {if (err) throw err}); 
             res.redirect('account');
         });
     });
