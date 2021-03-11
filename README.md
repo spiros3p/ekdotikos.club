@@ -1,6 +1,6 @@
 Website URL: 
 
-ekdotiko.club
+https://ekdotiko.club/
 
 
 Εργαλεία 
