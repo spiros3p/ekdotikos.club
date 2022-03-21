@@ -1,0 +1,44 @@
+version: '3.9' # optional since v1.27.0
+services:
+  # shishahub-db:
+  #   image: mysql:5.7
+  #   restart: unless-stopped
+  #   ports:
+  #     - '3306:3306'
+  #   env_file: ./.env
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${DB_PASS}
+  #     MYSQL_DATABASE: ${DB_DB}
+  #   volumes:
+  #     - db_data:/var/lib/mysql
+
+  shishahub-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '3011:3011'
+    env_file: ./.env
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_DB: ${DB_DB}
+    volumes:
+      - ./:/backend
+      
+  # shishahub-phpmyadmin:
+  #   depends_on:
+  #     - shishahub-db
+  #   image: phpmyadmin/phpmyadmin
+  #   restart: unless-stopped
+  #   ports:
+  #     - '5010:80'
+  #   env_file: ./.env
+  #   environment:
+  #     PMA_HOST: shishahub-db 
+  #     MYSQL_ROOT_PASSWORD: ${DB_PASS}
+
+volumes:
+  db_data: {}

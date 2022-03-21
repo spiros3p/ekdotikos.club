@@ -857,7 +857,7 @@ app.post('/sendToUser',require('connect-ensure-login').ensureLoggedIn(), (req, r
   
 })
 
-var portNumber = process.env.port || process.env.PORT || 3000;
+var portNumber = process.env.PORT || 3011;
 //server listening
 app.listen(portNumber, () => {
   console.log('Server is running at port '+portNumber);
