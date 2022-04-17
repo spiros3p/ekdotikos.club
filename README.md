@@ -1,6 +1,6 @@
 Website URL: 
 
-https://ekdotiko.club/
+https://ekdotikos.speppas.online/
 
 
 Εργαλεία 
